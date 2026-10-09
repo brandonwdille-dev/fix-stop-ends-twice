@@ -53,6 +53,7 @@ public class Game {
     private ModeVictoire modeVictoire;
     private Etat etat;
     private static Bingo bingoInstance;
+    private boolean ended = false;		// Added new game check state
 
     private Game(boolean defiBonus, boolean playersDamage, ModeAffichage modeAffichage, ModeJeu modeJeu, ModeVictoire modeVictoire, Etat etat) {
         this.defiBonus = defiBonus;
@@ -79,10 +80,12 @@ public class Game {
     }
 
     public void end() {
+    	if (ended) { return; }	//Stops the end method if already ended
         Spawn.create();
         Environment.setGamerulesSetup();
         Spawn.teleportPlayers();
         Environment.clearPlayers();
+        ended = true;	// Sets the game state to ended
     }
 
     public static Bingo getBingoInstance() {
@@ -114,7 +117,9 @@ public class Game {
     }
 
     public void setEtat(Etat etat) {
-        this.etat = etat;
+         if (this.etat == etat) { return; } //If the game is already in the requested state do nothing.
+         
+    	this.etat = etat;
         if (etat == Etat.ENDGAME) {
             Bingo.setNotListenChallenges();
             end();
